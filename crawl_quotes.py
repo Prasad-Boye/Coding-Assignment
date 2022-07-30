@@ -28,14 +28,14 @@ def get_results(quotes,quote_content,author,tags):
     
     return {"quotes":quotes}
 
-def get_response(url):
+def get_page_response(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     next = soup.select_one('li.next > a')
     
     return [next,soup]
 
-def check_next(next,url):
+def get_next_page_url(next,url):
     next_page_url = next.get('href')
     url = urljoin(url, next_page_url)
     quotesData = soup.find_all("div", class_="quote")
@@ -47,13 +47,13 @@ quotes = []
 url = 'http://quotes.toscrape.com/'
    
 while True:
-    [next,soup] = get_response(url)
+    [next,soup] = get_page_response(url)
     if next:
-        [quotes_dict,url]=check_next(next,url)
+        [quotes_dict,url]=get_next_page_url(next,url)
     else:
         break    
     
-print(json.dumps(quotes_dict))
+# print(json.dumps(quotes_dict))
 file = open('quotes.json','w')
 file.write(json.dumps(quotes_dict))
 file.close()
