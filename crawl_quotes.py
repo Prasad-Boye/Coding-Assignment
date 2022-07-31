@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from bs4 import BeautifulSoup
 import json
 import requests
@@ -32,24 +33,24 @@ def get_page_response(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     next = soup.select_one('li.next > a')
+    quotesData = soup.find_all("div", class_="quote")
+    quotes_dict = get_quote_details(quotes,quotesData)
     
-    return [next,soup]
+    return [next,soup,quotesData,quotes_dict]
 
 def get_next_page_url(next,url):
     next_page_url = next.get('href')
     url = urljoin(url, next_page_url)
-    quotesData = soup.find_all("div", class_="quote")
-    quotes_dict = get_quote_details(quotes,quotesData)
     
-    return [quotes_dict,url]
+    return url
 
 quotes = []
 url = 'http://quotes.toscrape.com/'
    
 while True:
-    [next,soup] = get_page_response(url)
-    if next:
-        [quotes_dict,url]=get_next_page_url(next,url)
+    [next,soup,quotesData,quotes_dict] = get_page_response(url)
+    if next != None:
+        url=get_next_page_url(next,url)
     else:
         break    
     
