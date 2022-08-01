@@ -9,10 +9,10 @@ I created a sqlite database to store the data in the quotes.json in the form of 
 
 In analyze_quotes.py file I have written function logics that return:
 
-Total no. of quotations on the website
+1. Total no. of quotations on the website
 
-No. of quotations authored by the given author’s name (user Input required) Example: “Albert Einstein”
+2. No. of quotations authored by the given author’s name (user Input required) Example: “Albert Einstein”
 
-Minimum, Maximum, and Average no. of tags on the quotations
+3. Minimum, Maximum, and Average no. of tags on the quotations
 
-Given a number N return top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes (user Input required)
+4. Given a number N return top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes (user Input required)
