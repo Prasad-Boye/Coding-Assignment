@@ -15,4 +15,4 @@ In analyze_quotes.py file I have written function logics that return:
 
 3. Minimum, Maximum, and Average no. of tags on the quotations
 
-4. Given a number N return top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes (***User Input required***)
+4. Given a number N returns top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes (***User Input required***)
