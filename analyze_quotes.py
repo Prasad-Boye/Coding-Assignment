@@ -4,13 +4,15 @@ connection = sqlite3.connect('quotes.db')
 cursor = connection.cursor()
 
 
-
 ### Query 1 Get total number of quotations on the website
 
-query1_data = cursor.execute("SELECT count(id) FROM quote_author")
-for row in query1_data:
-    print("Total no. of quotations on the website :",row[0])
-    print()
+def get_total_no_of_quotes():
+    query1_data = cursor.execute("SELECT count(id) FROM quote_author")
+    for row in query1_data:
+        print("Total no. of quotations on the website :",row[0])
+        print()
+        
+get_total_no_of_quotes()
 
 
 ### Query 2 Get total number of quotes by a given author
@@ -75,17 +77,20 @@ try:
 except:
     pass
 
-cursor.execute("SELECT MIN(no_of_tags),MAX(no_of_tags),AVG(no_of_tags)\
-    FROM quote_tag_details")
+def get_max_min_avg_of_tags():
+    cursor.execute("SELECT MIN(no_of_tags),MAX(no_of_tags),AVG(no_of_tags)\
+        FROM quote_tag_details")
 
-query3_data = cursor.fetchall()
+    query3_data = cursor.fetchall()
 
-for item in query3_data:
-    print("Minimum tags on the quotations: ",item[0])
-    print("Maximum tags on the quotations: ",item[1])
-    print("Average tags on the quotations: ",item[2])
-    print()
+    for item in query3_data:
+        print("Minimum tags on the quotations: ",item[0])
+        print("Maximum tags on the quotations: ",item[1])
+        print("Average tags on the quotations: ",item[2])
+        print()
     
+get_max_min_avg_of_tags()
+
 
 
 ### Query4 Authors who authored the maximum number of quotations
@@ -127,5 +132,6 @@ def find_top_authors():
         find_top_authors()
 
 find_top_authors()
+
 
 connection.close()

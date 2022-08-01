@@ -26,12 +26,17 @@ def populate_quote_tag_table(quote,tag):
         ",{"tag":tag,"quote" :quote})
 
 
+def get_each_tag(tags):
+    for tag in tags:
+        populate_tag_table(tag)
+        populate_quote_tag_table(each['quote'],tag)
+
 try:
     connection.execute('''CREATE TABLE quote_author
-            (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-            quote_content TEXT NOT NULL UNIQUE,
-            author_name VARCHAR(200)
-            );''')
+        (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+        quote_content TEXT NOT NULL UNIQUE,
+        author_name VARCHAR(200)
+        );''')
 
     connection.execute('''CREATE TABLE tag
         (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
@@ -48,21 +53,12 @@ try:
     with open('quotes.json') as json_file:
         data = json.load(json_file)
         for each in data['quotes']:
-            quote = each['quote']
-            author = each['author']
-            populate_quote_author_table(quote,author)
-            for tag in each['tags']:
-                populate_tag_table(tag)
-                populate_quote_tag_table(quote,tag)
+            populate_quote_author_table(each['quote'],each['author'])
+            get_each_tag(each['tags'])
     
 except:
     print("Tables Already Exist")
 
-        
 
-
-
-
-    
 connection.commit()
 connection.close()
