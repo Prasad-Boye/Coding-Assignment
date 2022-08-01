@@ -97,7 +97,7 @@ get_max_min_avg_of_tags()
 
 def print_top_authors(query4_data):
     for row in query4_data:
-        print(row[1])
+        print(row[1],"-",row[0])
 
 def get_top_authors(number):
     cursor.execute("SELECT * \
@@ -122,7 +122,7 @@ def find_top_authors():
 
         if(top_number > 0):
             query4_data = get_top_authors(top_number)
-            print("Top {} Authors List:".format(top_number))
+            print("Top {} Authors and no. of quotes:".format(top_number))
             print_top_authors(query4_data)
         else:
             print("Please enter a valid positive number")
