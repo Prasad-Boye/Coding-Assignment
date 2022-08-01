@@ -3,16 +3,16 @@ In this project I scrapped data from http://quotes.toscrape.com/page/1/ which co
 
 There are multiple pages on the website so, I developed a command logic in crawl_quotes.py file that scrapes data from all the pages on the website.
 
-The scrapped data is then stored in the quotes.json
+Scrapped stored the data in the quotes.json
 
-I created a sqlite database to store the data in the quotes.json in the form of relational tables (quotes.db).
+I created a database to store the data in the quotes.json in the form of relational tables (quotes.db).
 
 In analyze_quotes.py file I have written function logics that return:
 
 1. Total no. of quotations on the website
 
-2. No. of quotations authored by the given author’s name (user Input required) Example: “Albert Einstein”
+2. No. of quotations authored by the given author’s name Example: “Albert Einstein” (***User Input required***)
 
 3. Minimum, Maximum, and Average no. of tags on the quotations
 
-4. Given a number N return top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes (user Input required)
+4. Given a number N return top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes (***User Input required***)
