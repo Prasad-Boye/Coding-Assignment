@@ -15,8 +15,8 @@ def get_total_no_of_quotes():
 get_total_no_of_quotes()
 
 
-### Query 2 Get total number of quotes by a given author
 
+### Query 2 Get total number of quotes by a given author
 
 def get_author_quotes(author):
     cursor.execute("SELECT * \
@@ -27,7 +27,6 @@ def get_author_quotes(author):
 
 def get_no_of_quotes_by_author():
     print("Enter Author Name :")
- 
     author = input()
 
     cursor = get_author_quotes(author)
@@ -42,7 +41,6 @@ def get_no_of_quotes_by_author():
         get_no_of_quotes_by_author()
 
 get_no_of_quotes_by_author()
-
 
 
 
@@ -67,8 +65,8 @@ def get_max_min_avg_of_tags():
     query3_data = cursor.fetchall()
 
     for item in query3_data:
-        print("Minimum tags on the quotations: ",item[0])
-        print("Maximum tags on the quotations: ",item[1])
+        print("Minimum tags on a quotation: ",item[0])
+        print("Maximum tags on a quotation: ",item[1])
         print("Average tags on the quotations: ",item[2])
         print()
     

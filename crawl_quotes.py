@@ -23,8 +23,8 @@ def get_tags(quote_details):
 
 def get_results(quotes,quote_content,author,tags):
     quote = quote_content.text
-    stripped_length = len(quote)-1
-    quotes.append({"quote":quote[1:stripped_length],"author":author.text.strip(),"tags":tags})
+    trim_len = len(quote)-1
+    quotes.append({"quote":quote[1:trim_len],"author":author.text,"tags":tags})
     
     return {"quotes":quotes}
 
