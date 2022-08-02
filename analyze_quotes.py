@@ -17,42 +17,25 @@ get_total_no_of_quotes()
 
 ### Query 2 Get total number of quotes by a given author
 
-def capitalize_author_name(letter,author,isCapital):
-    if letter == " " or letter == ".":
-        isCapital = True
-        
-    elif isCapital:
-        letter = letter.capitalize()
-        isCapital = False
-    else:
-        letter = letter.lower()
-        
-    author += letter
-    
-    return [author,isCapital]
 
 def get_author_quotes(author):
     cursor.execute("SELECT * \
         FROM (SELECT count(author_name),author_name \
             FROM quote_author GROUP BY author_name)\
-        WHERE author_name=:author ",{"author":author })
+        WHERE UPPER(author_name)=:author ",{"author":author.upper()})
     return cursor
 
 def get_no_of_quotes_by_author():
     print("Enter Author Name :")
-    author_name = input()
-    isCapital = True
-    author = ''
-    
-    for letter in author_name:
-        [author,isCapital] = capitalize_author_name(letter,author,isCapital)
+ 
+    author = input()
 
     cursor = get_author_quotes(author)
     query2_data = cursor.fetchall()
     
     if(len(query2_data) > 0):
         for row in query2_data:
-            print("Total no. of quotations by {}:".format(author),row[0])
+            print("Total no. of quotations on the website by {}:".format(author),row[0])
             print()
     else:
         print("Oops! the entered author name is invalid. Please try again...")
@@ -114,7 +97,7 @@ def get_top_authors(number):
 def find_top_authors():
     try:
     ### Reading Input from the User 
-        print("Enter a positive number:")
+        print("Enter a positive number between 1 - 50:")
         top_number = int(input())
         
         if(top_number > 50):
