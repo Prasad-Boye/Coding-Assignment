@@ -97,19 +97,17 @@ def find_top_authors():
     ### Reading Input from the User 
         print("Enter a positive number between 1 - 50:")
         top_number = int(input())
-        
-        if(top_number > 50):
-            top_number = 50
 
-        if(top_number > 0):
+        if(top_number > 0 and top_number < 51):
             query4_data = get_top_authors(top_number)
             print("Top {} Authors and no. of quotes:".format(top_number))
             print_top_authors(query4_data)
         else:
-            print("Please enter a valid positive number")
+            print("Please enter a valid positive number between 1-50")
             find_top_authors()
             
     except:
+        print("Please enter a valid positive number between 1-50")
         find_top_authors()
 
 find_top_authors()
