@@ -4,6 +4,27 @@ import json
 #Establishing connection with the database
 connection = sqlite3.connect('quotes.db')
 
+def create_quotes_table():
+    connection.execute('''CREATE TABLE quote
+        (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+        quote_content TEXT NOT NULL,
+        author_name VARCHAR(200)
+        );''')
+    
+def create_tag_table():
+    connection.execute('''CREATE TABLE tag
+        (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+        tag_name TEXT NOT NULL UNIQUE);''')
+
+def create_quote_tag_table():
+    connection.execute('''CREATE TABLE quote_tag(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+        tag_id INTEGER,
+        quote_id INTEGER,
+        FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+        FOREIGN KEY (quote_id) REFERENCES quote(id) ON DELETE CASCADE
+        );''')
+
 def populate_quote_author_table(quote_content,author_name):
     connection.execute("INSERT OR IGNORE INTO \
         quote_author (quote_content,author_name)\
@@ -31,33 +52,15 @@ def get_each_tag(tags):
         populate_tag_table(tag)
         populate_quote_tag_table(each['quote'],tag)
 
-try:
-    connection.execute('''CREATE TABLE quote_author
-        (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-        quote_content TEXT NOT NULL UNIQUE,
-        author_name VARCHAR(200)
-        );''')
 
-    connection.execute('''CREATE TABLE tag
-        (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-        tag_name TEXT NOT NULL UNIQUE);''')
-
-    connection.execute('''CREATE TABLE quote_tag(
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-        tag_id INTEGER,
-        quote_id INTEGER,
-        FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-        FOREIGN KEY (quote_id) REFERENCES quote(id) ON DELETE CASCADE
-        );''')
- 
-    with open('quotes.json') as json_file:
-        data = json.load(json_file)
-        for each in data['quotes']:
-            populate_quote_author_table(each['quote'],each['author'])
-            get_each_tag(each['tags'])
+with open('quotes.json') as json_file:
+    data = json.load(json_file)
+    for each in data['quotes']:
+        populate_quote_author_table(each['quote'],each['author'])
+        get_each_tag(each['tags'])
     
-except:
-    print("Tables Already Exist")
+
+
 
 
 connection.commit()
