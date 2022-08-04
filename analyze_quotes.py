@@ -26,9 +26,9 @@ def get_no_of_quotes_by_author():
     author = "Albert Einstein"
 
     cursor = get_author_quotes(author)
-    quotes_by_author_count = cursor.fetchall()
+    quotes_by_author = cursor.fetchall()
    
-    for row in quotes_by_author_count:
+    for row in quotes_by_author:
         print("Total no. of quotations on the website by {}:".format(author),row[0])
         print()
 
@@ -38,9 +38,9 @@ def get_no_of_quotes_by_author():
 
 def get_max_min_avg_of_tags():
     cursor.execute("SELECT MIN(no_of_tags),MAX(no_of_tags),AVG(no_of_tags)\
-            FROM (SELECT count(tag) as no_of_tags  FROM quotes LEFT JOIN \
-            tags ON quotes.quote = tags.quote_content \
-            GROUP BY quote)\
+        FROM (SELECT count(tag) as no_of_tags  FROM quotes LEFT JOIN \
+        tags ON quotes.quote = tags.quote_content \
+        GROUP BY quote)\
        ")
 
     min_max_avg_of_tags = cursor.fetchall()
