@@ -11,8 +11,8 @@ In analyze_quotes.py file I have written function logics that return:
 
 1. Total no. of quotations on the website
 
-2. No. of quotations authored by the given author’s name Example: “Albert Einstein” (***User Input required***)
+2. No. of quotations authored by the given author’s name Example: “Albert Einstein” 
 
 3. Minimum, Maximum, and Average no. of tags on the quotations
 
-4. Given a number N returns top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes (***User Input required***)
+4. Given a number N returns top N authors who authored the maximum number of quotations sorted in descending order of no. of quotes 
