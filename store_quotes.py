@@ -3,65 +3,84 @@ import json
 
 #Establishing connection with the database
 connection = sqlite3.connect('quotes.db')
+cursor = connection.cursor()
+
 
 def create_quotes_table():
-    connection.execute('''CREATE TABLE quote
-        (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-        quote_content TEXT NOT NULL,
-        author_name VARCHAR(200)
-        );''')
+    cursor.execute("DROP TABLE IF EXISTS quotes")
+    table = """ CREATE TABLE quotes (
+        quote TEXT NOT NULL,
+        author_name VARCHAR(50)
+        ); """
+
+    cursor.execute(table)
     
+    
+def create_author_table():
+    cursor.execute("""DROP TABLE IF EXISTS authors""")
+    table = """ CREATE TABLE authors (
+        name VARCHAR(100) PRIMARY KEY UNIQUE,
+        born VARCHAR(200),
+        reference VARCHAR(200)
+        ); """
+        
+    cursor.execute(table)
+
+
 def create_tag_table():
-    connection.execute('''CREATE TABLE tag
-        (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-        tag_name TEXT NOT NULL UNIQUE);''')
+    cursor.execute("""DROP TABLE IF EXISTS tags""")
+    table = """ CREATE TABLE tags
+        (tag VARCHAR(100),
+        quote_content TEXT,
+        FOREIGN KEY (quote_content) REFERENCES quotes(quote) ON DELETE CASCADE); """
+        
+    cursor.execute(table)
 
-def create_quote_tag_table():
-    connection.execute('''CREATE TABLE quote_tag(
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-        tag_id INTEGER,
-        quote_id INTEGER,
-        FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
-        FOREIGN KEY (quote_id) REFERENCES quote(id) ON DELETE CASCADE
-        );''')
 
-def populate_quote_author_table(quote_content,author_name):
+def populate_quote_table(quote,author):
+    connection.execute("INSERT INTO \
+        quotes (quote,author_name)\
+        VALUES (:quote,:author_name)",
+        {"quote":quote,"author_name":author})
+
+def populate_author_table(name,born,reference):
     connection.execute("INSERT OR IGNORE INTO \
-        quote_author (quote_content,author_name)\
-        VALUES (:quote_content,:author_name)",\
-        {"quote_content":quote_content,"author_name":author_name})
+        authors (name,born,reference)\
+        VALUES (:name,:born,:reference)",\
+        {"name":name,"born":born,"reference":reference})
 
-def populate_tag_table(tag_name):
-    connection.execute("INSERT OR IGNORE INTO tag (tag_name) \
-        VALUES (:tag_name)",{"tag_name":tag_name})
-            
-def populate_quote_tag_table(quote,tag):
-    connection.execute("INSERT INTO quote_tag(tag_id,quote_id)\
-        SELECT tag_item.tag_id, quote_item.quote_id\
-        FROM (SELECT id as tag_id\
-        FROM tag\
-        WHERE tag_name = :tag) as tag_item,\
-        (SELECT id as quote_id\
-        FROM quote_author\
-        WHERE quote_content = :quote) as quote_item\
-        ",{"tag":tag,"quote" :quote})
+def populate_tag_table(tag,quote):
+    connection.execute("INSERT INTO tags (tag,quote_content) \
+        VALUES (:tag,:quote_content)",{"tag":tag,"quote_content":quote})
 
 
-def get_each_tag(tags):
+def get_each_tag(quote,tags):
     for tag in tags:
-        populate_tag_table(tag)
-        populate_quote_tag_table(each['quote'],tag)
+        populate_tag_table(tag,quote)
 
 
-with open('quotes.json') as json_file:
-    data = json.load(json_file)
-    for each in data['quotes']:
-        populate_quote_author_table(each['quote'],each['author'])
-        get_each_tag(each['tags'])
+def get_quotes_data(quotes):
+    for each in quotes:
+        populate_quote_table(each['quote'],each['author'])
+        get_each_tag(each['quote'],each['tags'])
+
+
+def get_authors_data(authors):
+    for item in authors:
+        populate_author_table(item['name'],item['born'],item['reference'])          
+
+def store_quotes():
+    create_quotes_table()
+    create_author_table()
+    create_tag_table()
     
+    with open('quotes.json') as json_file:
+        data = json.load(json_file)
+        get_quotes_data(data['quotes'])
+        get_authors_data(data['authors'])
+            
 
-
-
+store_quotes()
 
 connection.commit()
 connection.close()
