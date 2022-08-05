@@ -60,7 +60,7 @@ def scrape_tags(quote_info):
 
 def get_results(quote_content,author,tags):
     quote = (quote_content.text.strip()).replace('”', '').replace('“','')
-    quote_details = {"quote":quote,"author":author.text,"tags":tags}
+    quote_details = {"quote":quote,"author":author.text.strip(),"tags":tags}
     
     return quote_details
     
