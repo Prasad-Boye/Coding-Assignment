@@ -6,7 +6,7 @@ import json
 import requests
 from urllib.parse import urljoin
 
-def scrape_author_details(url,authors_list):
+def scrape_author_details(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
     author_name = soup.find("h3",class_='author-title').text
@@ -14,18 +14,17 @@ def scrape_author_details(url,authors_list):
     author_born_location = soup.find('span', class_='author-born-location').text
     born = author_born_date + author_born_location
     author_details = {"name": author_name, "born":born,"reference" : url}
-    authors_list.append(author_details)
     
-    return authors_list
+    return author_details
     
 
-def get_author_details_url(quote_info,url,authors_list):
+def get_author_details_url(quote_info,url):
     about_container = quote_info.find("span",class_=lambda x: x != 'text')
     about_element = about_container.find('a')
     autor_details_url = about_element.get('href')
     url = urljoin(url, autor_details_url)
     
-    return scrape_author_details(url,authors_list)
+    return scrape_author_details(url)
     
 
 def get_quote_info(quotesData,url):
@@ -33,20 +32,23 @@ def get_quote_info(quotesData,url):
     authors_list = []
     
     for quote_info in quotesData:
-        scrape_quote_info(quote_info,page_quotes_list)
-        get_author_details_url(quote_info,url,authors_list)
+        quote_details = scrape_quote_info(quote_info)
+        author_details = get_author_details_url(quote_info,url)
+        page_quotes_list.append(quote_details) 
+        authors_list.append(author_details)
+        
         
     return page_quotes_list,authors_list
 
 
-def scrape_quote_info(quote_info,page_quotes_list):
+def scrape_quote_info(quote_info):
     quote_content = quote_info.find("span", class_="text")
     author= quote_info.find("small", class_="author")
     tags = scrape_tags(quote_info)
     quote_details = get_results(quote_content,author,tags)
-    page_quotes_list.append(quote_details)
     
-    return page_quotes_list
+    
+    return quote_details
 
 
 def scrape_tags(quote_info):
