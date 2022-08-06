@@ -7,7 +7,7 @@ cursor = connection.cursor()
 ### Query 1 Get total number of quotations on the website
 
 def get_total_no_of_quotes():
-    total_quotes = cursor.execute("SELECT count(author_name) FROM quotes")
+    total_quotes = cursor.execute("SELECT count(*) FROM quotes")
     for row in total_quotes:
         print("Total no. of quotations on the website :",row[0])
         print()
@@ -15,22 +15,20 @@ def get_total_no_of_quotes():
 
 ### Query 2 Get total number of quotes by a given author
 
-def get_author_quotes(author):
-    cursor.execute("SELECT * \
-        FROM (SELECT count(author_name),author_name \
-            FROM quotes GROUP BY author_name)\
-        WHERE author_name=:author ",{"author":author})
-    return cursor
+
 
 def get_no_of_quotes_by_author():
     author = "Albert Einstein"
 
-    cursor = get_author_quotes(author)
+    cursor.execute("SELECT count(quote) \
+        FROM quotes \
+        WHERE author_name=:author ",{"author":author})
     quotes_by_author = cursor.fetchall()
    
     for row in quotes_by_author:
-        print("Total no. of quotations on the website by {}:".format(author),row[0])
+        print("No of quotations by {} :".format(author),row[0])
         print()
+   
 
 
 
@@ -54,13 +52,13 @@ def get_max_min_avg_of_tags():
 
 ### Query4 Authors who authored the maximum number of quotations
 
-def find_top_authors(number):
+def find_top_authors(limit_value):
     cursor.execute("SELECT * \
-        FROM (SELECT count(author_name) as no_of_quotes,author_name \
+        FROM (SELECT count(quote) as no_of_quotes,author_id \
             FROM quotes \
-            GROUP BY author_name \
-            ORDER BY no_of_quotes DESC, author_name\
-            LIMIT :top_number)",{"top_number":number})
+            GROUP BY author_id \
+            ORDER BY no_of_quotes DESC\
+            LIMIT :top_number)",{"top_number":limit_value})
 
     top_authors = cursor.fetchall()
     
@@ -81,7 +79,8 @@ def get_all_results():
     get_no_of_quotes_by_author()
     get_max_min_avg_of_tags()
     get_top_authors()
-    
+
+
 get_all_results()
     
 connection.close()
