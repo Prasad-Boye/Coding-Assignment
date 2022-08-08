@@ -20,9 +20,13 @@ def get_total_no_of_quotes():
 def get_no_of_quotes_by_author():
     author = "Albert Einstein"
 
-    cursor.execute("SELECT count(quote) \
-        FROM quotes \
-        WHERE author_name=:author ",{"author":author})
+    cursor.execute("SELECT count(*)\
+        FROM (SELECT *  FROM quotes LEFT JOIN \
+        authors ON quotes.author_id = authors.id )\
+        WHERE name = :author\
+       ",{"author":author})
+
+
     quotes_by_author = cursor.fetchall()
    
     for row in quotes_by_author:
@@ -36,9 +40,10 @@ def get_no_of_quotes_by_author():
 
 def get_max_min_avg_of_tags():
     cursor.execute("SELECT MIN(no_of_tags),MAX(no_of_tags),AVG(no_of_tags)\
-        FROM (SELECT count(tag) as no_of_tags  FROM quotes LEFT JOIN \
-        tags ON quotes.quote = tags.quote_content \
-        GROUP BY quote)\
+        FROM (SELECT count(tag_id) as no_of_tags,quotes.id as quote  \
+            FROM quotes LEFT JOIN \
+            quote_tag ON quotes.id = quote_tag.quote_id \
+            GROUP BY quote)\
        ")
 
     min_max_avg_of_tags = cursor.fetchall()
@@ -53,12 +58,13 @@ def get_max_min_avg_of_tags():
 ### Query4 Authors who authored the maximum number of quotations
 
 def find_top_authors(limit_value):
-    cursor.execute("SELECT * \
-        FROM (SELECT count(quote) as no_of_quotes,author_id \
-            FROM quotes \
-            GROUP BY author_id \
+    cursor.execute("SELECT count(quote_id) as no_of_quotes,name\
+            FROM (SELECT quotes.id AS quote_id,authors.name  \
+            FROM quotes LEFT JOIN authors ON\
+            quotes.author_id = authors.id)\
+            GROUP BY name \
             ORDER BY no_of_quotes DESC\
-            LIMIT :top_number)",{"top_number":limit_value})
+            LIMIT :top_number",{"top_number":limit_value})
 
     top_authors = cursor.fetchall()
     

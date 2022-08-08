@@ -37,6 +37,18 @@ def create_tag_table():
         
     cursor.execute(table)
 
+def create_quote_tag_table():
+    cursor.execute("DROP TABLE IF EXISTS quote_tag")
+    table = """ CREATE TABLE quote_tag (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tag_id INT,
+        quote_id INT,
+        FOREIGN KEY (tag_id) REFERENCES tag(id),
+        FOREIGN KEY (quote_id) REFERENCES quote(id)
+        ); """
+
+    cursor.execute(table)
+
 
 def populate_quote_table(quote,author,author_dict):
     author_id = author_dict[author]
@@ -59,45 +71,54 @@ def populate_tag_table(tag):
     connection.execute("INSERT OR IGNORE INTO tags (tag) \
         VALUES (:tag)",{"tag":tag})
 
+def populate_quote_tag_table(tag_id,quote_id):
+    connection.execute("INSERT INTO quote_tag (tag_id,quote_id) \
+        VALUES (:tag_id,:quote_id)",{"tag_id":tag_id,"quote_id":quote_id})
+    
+def add_tag_data(tag,tag_dict,quote_count,tag_count):
+    tag_count += 1
+    if tag not in tag_dict:
+        tag_dict[tag] = tag_count
+    tag_id = tag_dict[tag]
+    populate_tag_table(tag)
+    populate_quote_tag_table(tag_id,quote_count)
+    
+    return tag_dict,tag_count
+    
 
-# def populate_quote_tag_tables(quotes):
-#     for each in quotes:
-#         populate_quote_table(each['quote'],each['author'])
-#         for tag in each['tags']:
-#             populate_tag_table(tag)
- 
-
-
-def filter_data(data):
-    quote_tag_dict = {}
-    author_dict = {}
-    author_count = 0
+def fill_quote_tag_tables(quotes,author_dict):
+    tag_dict = {}
     tag_count = 0
     quote_count = 0
     
+    for each in quotes:
+        populate_quote_table(each['quote'],each['author'],author_dict)
+        quote_count += 1
+        for tag in each['tags']:
+           tag_dict,tag_count =  add_tag_data(tag,tag_dict,quote_count,tag_count)
+
+
+def populate_tables(data):
+    author_dict = {}
+    author_count = 0
+
     for details in data['authors']:
         populate_author_table(details)
         author_count += 1
         author_dict[details['name']] = author_count
     
-    for each in data['quotes']:
-        populate_quote_table(each['quote'],each['author'],author_dict)
-        quote_count += 1
-        for tag in each['tags']:
-            tag_count += 1
-            
-            populate_tag_table(tag)
-            
-
+    fill_quote_tag_tables(data['quotes'],author_dict)
+    
 
 def store_quotes():
     create_quotes_table()
     create_author_table()
     create_tag_table()
+    create_quote_tag_table()
     
     with open('quotes.json') as json_file:
         data = json.load(json_file)
-        filter_data(data)
+        populate_tables(data)
             
 
 store_quotes()
