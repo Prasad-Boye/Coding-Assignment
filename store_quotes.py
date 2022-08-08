@@ -76,14 +76,13 @@ def populate_quote_tag_table(tag_id,quote_id):
         VALUES (:tag_id,:quote_id)",{"tag_id":tag_id,"quote_id":quote_id})
     
 def add_tag_data(tag,tag_dict,quote_count,tag_count):
-    tag_count += 1
     if tag not in tag_dict:
         tag_dict[tag] = tag_count
     tag_id = tag_dict[tag]
     populate_tag_table(tag)
     populate_quote_tag_table(tag_id,quote_count)
     
-    return tag_dict,tag_count
+    return tag_dict
     
 
 def fill_quote_tag_tables(quotes,author_dict):
@@ -95,7 +94,8 @@ def fill_quote_tag_tables(quotes,author_dict):
         populate_quote_table(each['quote'],each['author'],author_dict)
         quote_count += 1
         for tag in each['tags']:
-           tag_dict,tag_count =  add_tag_data(tag,tag_dict,quote_count,tag_count)
+            tag_count += 1
+            tag_dict =  add_tag_data(tag,tag_dict,quote_count,tag_count)
 
 
 def populate_tables(data):
